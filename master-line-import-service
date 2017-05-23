@@ -1,0 +1,102 @@
+<div class="w-load">
+  <div class="spin"></div>
+</div>
+
+
+myApp.factory('MasterLineImportService', ['$http', function($http) {
+	return new MasterLineImportService($http);
+}]);
+
+function MasterLineImportService(http) {
+
+	var spinner = null;
+
+	this.importMasterline = function(scope) {
+		smallLoadingIcon('.w-load');
+		http({
+			method : 'POST',
+			url : 'masterline/masterlineimport',
+			headers : {
+				'Content-Type' : undefined
+			},
+			data : {
+				flag : "0",
+				masterDate : "aoc",
+				files : scope.files
+			},
+			transformRequest : function(data) {
+				var formData = new FormData();
+				for (var i = 0; i < data.files.length; i++) {
+					formData.append("files", data.files[i]);
+				}
+				return formData;
+			}
+		}).success(function(data, status, headers, config) {
+			spinner.stop();
+			console.log("success.status" + status + "..headers:" + headers + "..data:" + data.resultCode);
+			if (data.resultCode == '200') {
+				var message = data.resultMsg;
+				alert(message);
+			} else if (data.resultCode == '500') {
+				var message = data.resultMsg;
+				alert(message);
+			} else if (data.resultCode == '501') {
+				var message = data.resultMsg;
+				alert(message);
+			}
+		}).error(function(data, status, headers, config) {
+			spinner.stop();
+			console.log("failed.status..." + status + "....");
+		})
+	}
+
+	this.exportProduct = function(scope) {
+		smallLoadingIcon('.w-load');
+		var datas = {
+			"year" : scope.year,
+			"season" : scope.season,
+		}
+		http({
+			method : 'POST',
+			url : "productexport/export",
+			data : datas,
+		}).success(function(data, status, headers, config) {
+			spinner.stop();
+			console.log(".....success......");
+			if (data.resultCode == '200') {
+				alert("send success...");
+			} else if (data.resultCode == '500') {
+				var message = data.resultMsg;
+				alert(message);
+			} else {
+				alert(".....success......");
+			}
+		}).error(function(data, status, headers, config) {
+			spinner.stop();
+			alert(".....failed......");
+			console.log(".....failed.....");
+		})
+	}
+
+	// spin
+	function smallLoadingIcon(ele) { // 小的loading图标
+		spinner = new Spinner({
+			lines : 12,
+			length : 5,
+			width : 2,
+			radius : 4,
+			color : '#333',
+			speed : 1,
+			trail : 50,
+			shadow : false,
+			hwaccel : false,
+			className : 'spinner',
+			top : 50,
+			left : 200
+		});
+		var target = $(ele + ' .spin')[0];
+		spinner.spin(target);
+		return spinner;
+	}
+
+};
