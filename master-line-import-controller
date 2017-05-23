@@ -1,0 +1,21 @@
+myApp.controller('MasterLineImportController', ['MasterLineImportService', '$scope', '$http',
+	function(MasterLineImportService, $scope, $http) {
+
+		$scope.season = '';
+		$scope.year = '';
+
+		$scope.seasons = ['', 'SP', 'SU', 'FA', 'HO'];
+		$scope.years = [''];
+		for (var i = 2016; i <= 2026; i++) {
+			$scope.years.push(i)
+		}
+
+		$scope.importMasterline = function() {
+			MasterLineImportService.importMasterline($scope);
+		}
+
+		$scope.exportProduct = function() {
+			MasterLineImportService.exportProduct($scope);
+		}
+
+	}]);
